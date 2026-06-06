@@ -293,44 +293,141 @@
   }
   .draw-text { font-size: 14px; color: var(--muted); margin-top: 8px; font-weight: 300; }
 
-  /* ── Result cards ── */
+  /* ── Result section ── */
   #resultSection { display: none; }
   .result-title {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  .result-count {
+  .result-count { font-size: 12px; color: var(--muted); }
+
+  /* ── View toggle ── */
+  .view-toggle {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .view-opt {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 5px;
     font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .view-opt input[type=radio] { display: none; }
+  .view-opt.active { background: var(--card-bg); color: var(--green); border: 1px solid rgba(0,200,122,0.25); }
+  .view-opt:not(.active):hover { color: var(--text); }
+
+  /* ── Group section ── */
+  .group-section { margin-bottom: 1.5rem; }
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .group-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: #000;
+    background: var(--green);
+    border-radius: 6px;
+    padding: 2px 9px;
+    line-height: 1.6;
+  }
+  .group-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .group-member-count {
+    font-size: 11px;
     color: var(--muted);
   }
+
+  /* ── Card view ── */
   .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
   }
   .result-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 14px 14px 12px;
+    padding: 12px 12px 10px;
     display: flex;
-    gap: 12px;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
+    gap: 6px;
     animation: cardIn 0.35s cubic-bezier(0.22,1,0.36,1) both;
     transition: transform 0.15s, border-color 0.15s;
   }
-  .result-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0,200,122,0.3);
-  }
+  .result-card:hover { transform: translateY(-2px); border-color: rgba(0,200,122,0.3); }
   @keyframes cardIn { from { opacity:0; transform:translateY(12px) scale(0.95); } to { opacity:1; transform:none; } }
-  .result-flag { font-size: 2.2rem; line-height: 1; flex-shrink: 0; }
-  .result-info { min-width: 0; }
-  .result-member { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
-  .result-country { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .result-num { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--green); line-height: 1; margin-bottom: 2px; }
+  .result-flag { font-size: 2rem; line-height: 1; }
+  .result-info { min-width: 0; width: 100%; }
+  .result-member { font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+  .result-country { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Table view ── */
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 0;
+    animation: cardIn 0.3s ease both;
+  }
+  .result-table thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+  .result-table thead th {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 10px 8px;
+    text-align: left;
+  }
+  .result-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.12s;
+  }
+  .result-table tbody tr:last-child { border-bottom: none; }
+  .result-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+  .result-table td {
+    padding: 9px 10px;
+    vertical-align: middle;
+  }
+  .td-group { width: 60px; }
+  .td-group span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: #000;
+    background: var(--green);
+    border-radius: 5px;
+    padding: 1px 7px;
+  }
+  .td-flag { width: 40px; font-size: 1.4rem; line-height: 1; }
+  .td-country { font-weight: 500; color: var(--text); }
+  .td-member { color: var(--muted); }
 
   /* ── Footer ── */
   .footer { text-align: center; padding: 2rem 0 3rem; font-size: 12px; color: rgba(255,255,255,0.18); }
@@ -412,10 +509,22 @@
         <span class="panel-label mb-0">Hasil Undian</span>
         <div class="d-flex align-items-center gap-2">
           <span class="result-count" id="resultCount"></span>
-          <button class="btn-reset" onclick="resetResult()">↺ Undian Ulang</button>
+          <div class="view-toggle">
+            <label class="view-opt active" id="optCard">
+              <input type="radio" name="viewMode" value="card" checked>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="6" height="6" rx="1.2" fill="currentColor"/><rect x="8" y="0" width="6" height="6" rx="1.2" fill="currentColor"/><rect x="0" y="8" width="6" height="6" rx="1.2" fill="currentColor"/><rect x="8" y="8" width="6" height="6" rx="1.2" fill="currentColor"/></svg>
+              Card
+            </label>
+            <label class="view-opt" id="optTable">
+              <input type="radio" name="viewMode" value="table">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="14" height="2.5" rx="1" fill="currentColor"/><rect x="0" y="4" width="14" height="2.5" rx="1" fill="currentColor"/><rect x="0" y="8" width="14" height="2.5" rx="1" fill="currentColor"/><rect x="0" y="12" width="14" height="2" rx="1" fill="currentColor"/></svg>
+              Tabel
+            </label>
+          </div>
+          <button class="btn-reset" onclick="resetResult()">↺ Ulang</button>
         </div>
       </div>
-      <div class="results-grid" id="resultsGrid"></div>
+      <div id="resultsContainer"></div>
     </div>
 
     <div class="footer">made with ⚽ — FIFA World Cup Draw App</div>
@@ -430,65 +539,54 @@
 <script>
 const COUNTRIES = {
   2026: [
-    // Grup A
-    {n:"Meksiko",f:"🇲🇽"},{n:"Afrika Selatan",f:"🇿🇦"},{n:"Korea Selatan",f:"🇰🇷"},{n:"Ceko",f:"🇨🇿"},
-    // Grup B
-    {n:"Kanada",f:"🇨🇦"},{n:"Bosnia Herzegovina",f:"🇧🇦"},{n:"Qatar",f:"🇶🇦"},{n:"Swiss",f:"🇨🇭"},
-    // Grup C
-    {n:"Brasil",f:"🇧🇷"},{n:"Maroko",f:"🇲🇦"},{n:"Haiti",f:"🇭🇹"},{n:"Skotlandia",f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿"},
-    // Grup D
-    {n:"Amerika Serikat",f:"🇺🇸"},{n:"Paraguay",f:"🇵🇾"},{n:"Australia",f:"🇦🇺"},{n:"Turki",f:"🇹🇷"},
-    // Grup E
-    {n:"Jerman",f:"🇩🇪"},{n:"Curaçao",f:"🇨🇼"},{n:"Pantai Gading",f:"🇨🇮"},{n:"Ecuador",f:"🇪🇨"},
-    // Grup F
-    {n:"Belanda",f:"🇳🇱"},{n:"Jepang",f:"🇯🇵"},{n:"Swedia",f:"🇸🇪"},{n:"Tunisia",f:"🇹🇳"},
-    // Grup G
-    {n:"Belgia",f:"🇧🇪"},{n:"Mesir",f:"🇪🇬"},{n:"Iran",f:"🇮🇷"},{n:"Selandia Baru",f:"🇳🇿"},
-    // Grup H
-    {n:"Spanyol",f:"🇪🇸"},{n:"Tanjung Verde",f:"🇨🇻"},{n:"Arab Saudi",f:"🇸🇦"},{n:"Uruguay",f:"🇺🇾"},
-    // Grup I
-    {n:"Prancis",f:"🇫🇷"},{n:"Senegal",f:"🇸🇳"},{n:"Irak",f:"🇮🇶"},{n:"Norwegia",f:"🇳🇴"},
-    // Grup J
-    {n:"Argentina",f:"🇦🇷"},{n:"Aljazair",f:"🇩🇿"},{n:"Austria",f:"🇦🇹"},{n:"Yordania",f:"🇯🇴"},
-    // Grup K
-    {n:"Portugal",f:"🇵🇹"},{n:"Kongo DR",f:"🇨🇩"},{n:"Uzbekistan",f:"🇺🇿"},{n:"Colombia",f:"🇨🇴"},
-    // Grup L
-    {n:"Inggris",f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"},{n:"Kroasia",f:"🇭🇷"},{n:"Ghana",f:"🇬🇭"},{n:"Panama",f:"🇵🇦"}
+    {n:"Meksiko",f:"🇲🇽",g:"A"},{n:"Afrika Selatan",f:"🇿🇦",g:"A"},{n:"Korea Selatan",f:"🇰🇷",g:"A"},{n:"Ceko",f:"🇨🇿",g:"A"},
+    {n:"Kanada",f:"🇨🇦",g:"B"},{n:"Bosnia Herzegovina",f:"🇧🇦",g:"B"},{n:"Qatar",f:"🇶🇦",g:"B"},{n:"Swiss",f:"🇨🇭",g:"B"},
+    {n:"Brasil",f:"🇧🇷",g:"C"},{n:"Maroko",f:"🇲🇦",g:"C"},{n:"Haiti",f:"🇭🇹",g:"C"},{n:"Skotlandia",f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",g:"C"},
+    {n:"Amerika Serikat",f:"🇺🇸",g:"D"},{n:"Paraguay",f:"🇵🇾",g:"D"},{n:"Australia",f:"🇦🇺",g:"D"},{n:"Turki",f:"🇹🇷",g:"D"},
+    {n:"Jerman",f:"🇩🇪",g:"E"},{n:"Curaçao",f:"🇨🇼",g:"E"},{n:"Pantai Gading",f:"🇨🇮",g:"E"},{n:"Ecuador",f:"🇪🇨",g:"E"},
+    {n:"Belanda",f:"🇳🇱",g:"F"},{n:"Jepang",f:"🇯🇵",g:"F"},{n:"Swedia",f:"🇸🇪",g:"F"},{n:"Tunisia",f:"🇹🇳",g:"F"},
+    {n:"Belgia",f:"🇧🇪",g:"G"},{n:"Mesir",f:"🇪🇬",g:"G"},{n:"Iran",f:"🇮🇷",g:"G"},{n:"Selandia Baru",f:"🇳🇿",g:"G"},
+    {n:"Spanyol",f:"🇪🇸",g:"H"},{n:"Tanjung Verde",f:"🇨🇻",g:"H"},{n:"Arab Saudi",f:"🇸🇦",g:"H"},{n:"Uruguay",f:"🇺🇾",g:"H"},
+    {n:"Prancis",f:"🇫🇷",g:"I"},{n:"Senegal",f:"🇸🇳",g:"I"},{n:"Irak",f:"🇮🇶",g:"I"},{n:"Norwegia",f:"🇳🇴",g:"I"},
+    {n:"Argentina",f:"🇦🇷",g:"J"},{n:"Aljazair",f:"🇩🇿",g:"J"},{n:"Austria",f:"🇦🇹",g:"J"},{n:"Yordania",f:"🇯🇴",g:"J"},
+    {n:"Portugal",f:"🇵🇹",g:"K"},{n:"Kongo DR",f:"🇨🇩",g:"K"},{n:"Uzbekistan",f:"🇺🇿",g:"K"},{n:"Colombia",f:"🇨🇴",g:"K"},
+    {n:"Inggris",f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",g:"L"},{n:"Kroasia",f:"🇭🇷",g:"L"},{n:"Ghana",f:"🇬🇭",g:"L"},{n:"Panama",f:"🇵🇦",g:"L"}
   ]
 };
 
 let members = [];
 let edition = 2026;
+let lastResults = [];
+let viewMode = 'card';
 
+// ── View toggle ──
+$(document).on('change', 'input[name=viewMode]', function() {
+  viewMode = $(this).val();
+  $('.view-opt').removeClass('active');
+  $(this).closest('.view-opt').addClass('active');
+  if (lastResults.length) renderResults(lastResults);
+});
+
+// ── Parse textarea ──
 function parseTextarea() {
   const raw = $('#memberTextarea').val();
-  const names = raw
-    .split(/[\n,]+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+  const names = raw.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
   const unique = [...new Map(names.map(n => [n.toLowerCase(), n])).values()];
   members = unique;
   updatePreview();
 }
 
 function updatePreview() {
-  const $preview = $('#parsePreview');
-  const $tagWrap = $('#tagWrap');
-  const $liveCount = $('#liveCount');
-
   if (members.length === 0) {
-    $preview.hide();
-    $liveCount.text('');
+    $('#parsePreview').hide();
+    $('#liveCount').text('');
     return;
   }
-
-  $liveCount.text(members.length + ' anggota');
+  $('#liveCount').text(members.length + ' anggota');
   $('#parseCount').text(members.length + ' anggota terdeteksi');
-  $tagWrap.empty();
-  members.forEach(m => {
-    $tagWrap.append(`<span class="member-tag">${esc(m)}</span>`);
-  });
-  $preview.show();
+  const $wrap = $('#tagWrap').empty();
+  members.forEach(m => $wrap.append(`<span class="member-tag">${esc(m)}</span>`));
+  $('#parsePreview').show();
 }
 
 function clearTextarea() {
@@ -501,7 +599,7 @@ $('#memberTextarea').on('input', parseTextarea);
 
 function setEdition(yr) {
   edition = yr;
-  $('#btn2022, #btn2026').removeClass('active');
+  $('#btn2026').removeClass('active');
   $('#btn' + yr).addClass('active');
   $('#resultSection').hide();
 }
@@ -520,6 +618,7 @@ function shuffle(arr) {
   return a;
 }
 
+// ── Draw ──
 function doDraw() {
   if (members.length === 0) { showToast('Tambahkan minimal 1 anggota terlebih dahulu'); return; }
   const pool = COUNTRIES[edition];
@@ -533,36 +632,98 @@ function doDraw() {
 
   setTimeout(() => {
     const picked = shuffle(pool);
-    const results = members.map((m, i) => ({ member: m, country: picked[i] }));
-    $('#drawAnim').fadeOut(200, () => renderResults(results));
+    lastResults = members.map((m, i) => ({ member: m, country: picked[i] }));
+    $('#drawAnim').fadeOut(200, () => renderResults(lastResults));
     $('#drawBtn').prop('disabled', false);
   }, 1400);
 }
 
+// ── Group results by their group letter ──
+function groupResults(results) {
+  const map = {};
+  results.forEach(r => {
+    const g = r.country.g || '?';
+    if (!map[g]) map[g] = [];
+    map[g].push(r);
+  });
+  return map;
+}
+
+// ── Render ──
 function renderResults(results) {
-  const $grid = $('#resultsGrid').empty();
+  const $container = $('#resultsContainer').empty();
   $('#resultCount').text(results.length + ' peserta');
-  results.forEach((r, i) => {
-    const delay = i * 55;
-    const $card = $(`
-      <div class="result-card" style="animation-delay:${delay}ms">
-        <div class="result-flag">${r.country.f}</div>
-        <div class="result-info">
-          <div class="result-num">#${String(i+1).padStart(2,'0')}</div>
-          <div class="result-member">${esc(r.member)}</div>
-          <div class="result-country">${esc(r.country.n)}</div>
-        </div>
+
+  const grouped = groupResults(results);
+  const groupKeys = Object.keys(grouped).sort();
+
+  groupKeys.forEach((g, gi) => {
+    const rows = grouped[g];
+    const $section = $('<div class="group-section"></div>');
+
+    // Group header
+    $section.append(`
+      <div class="group-header">
+        <span class="group-badge">GRUP ${esc(g)}</span>
+        <div class="group-divider"></div>
+        <span class="group-member-count">${rows.length} peserta</span>
       </div>
     `);
-    $grid.append($card);
+
+    if (viewMode === 'card') {
+      const $grid = $('<div class="results-grid"></div>');
+      rows.forEach((r, i) => {
+        const delay = (gi * rows.length + i) * 55;
+        $grid.append(`
+          <div class="result-card" style="animation-delay:${delay}ms">
+            <div class="result-flag">${r.country.f}</div>
+            <div class="result-info">
+              <div class="result-member">${esc(r.member)}</div>
+              <div class="result-country">${esc(r.country.n)}</div>
+            </div>
+          </div>
+        `);
+      });
+      $section.append($grid);
+    } else {
+      const $wrap = $('<div class="panel" style="padding:0;overflow:hidden;"></div>');
+      const $table = $('<table class="result-table"></table>');
+      $table.append(`
+        <thead>
+          <tr>
+            <th class="td-group">Grup</th>
+            <th class="td-flag"></th>
+            <th class="td-country">Negara</th>
+            <th class="td-member">Anggota</th>
+          </tr>
+        </thead>
+      `);
+      const $tbody = $('<tbody></tbody>');
+      rows.forEach(r => {
+        $tbody.append(`
+          <tr>
+            <td class="td-group"><span>${esc(g)}</span></td>
+            <td class="td-flag">${r.country.f}</td>
+            <td class="td-country">${esc(r.country.n)}</td>
+            <td class="td-member">${esc(r.member)}</td>
+          </tr>
+        `);
+      });
+      $table.append($tbody);
+      $wrap.append($table);
+      $section.append($wrap);
+    }
+
+    $container.append($section);
   });
+
   $('#resultSection').fadeIn(300);
   $('html, body').animate({ scrollTop: $('#resultSection').offset().top - 20 }, 500);
 }
 
 function resetResult() {
   $('#resultSection').fadeOut(200);
-  setTimeout(() => { $('#resultsGrid').empty(); $('#resultSection').hide(); }, 220);
+  setTimeout(() => { $('#resultsContainer').empty(); lastResults = []; $('#resultSection').hide(); }, 220);
 }
 
 function esc(s) {
