@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undian Piala Dunia 🏆</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:   #00C87A;
+    --green-d: #009A5E;
+    --gold:    #F5C200;
+    --dark:    #0B0F0E;
+    --card-bg: #131918;
+    --surface: #1C2220;
+    --border:  rgba(255,255,255,0.07);
+    --text:    #E8EDE9;
+    --muted:   rgba(232,237,233,0.5);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Pitch texture background ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 38px,
+        rgba(255,255,255,0.018) 38px,
+        rgba(255,255,255,0.018) 40px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 38px,
+        rgba(255,255,255,0.018) 38px,
+        rgba(255,255,255,0.018) 40px
+      );
+    pointer-events: none;
+  }
+
+  .page-wrap { position: relative; z-index: 1; }
+
+  /* ── Hero header ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(245,194,0,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 10vw, 6rem);
+    letter-spacing: 0.03em;
+    line-height: 0.9;
+    margin: 0 0 10px;
+    background: linear-gradient(135deg, #fff 30%, var(--green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    margin: 0;
+  }
+  .trophy { font-size: 3rem; display: block; margin-bottom: 6px; }
+
+  /* ── Panel card ── */
+  .panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .panel-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  /* ── Inputs ── */
+  .form-control, .form-select {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    border-radius: 10px !important;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+  }
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 2px rgba(0,200,122,0.25) !important;
+    border-color: var(--green) !important;
+  }
+  .form-control::placeholder { color: var(--muted); }
+  .form-select option { background: var(--surface); color: var(--text); }
+
+  /* ── Textarea ── */
+  #memberTextarea {
+    width: 100%;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    border-radius: 10px !important;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+    padding: 10px 12px;
+    line-height: 1.6;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    display: block;
+  }
+  #memberTextarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,200,122,0.25) !important;
+    border-color: var(--green) !important;
+  }
+  #memberTextarea::placeholder { color: var(--muted); }
+  .textarea-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .hint-sep { opacity: 0.3; }
+
+  /* ── Parse preview ── */
+  .parse-preview {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(0,200,122,0.06);
+    border: 1px solid rgba(0,200,122,0.18);
+    border-radius: 10px;
+    display: none;
+  }
+  .parse-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .parse-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+  }
+  .btn-clear-all {
+    font-size: 11px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: color 0.12s;
+  }
+  .btn-clear-all:hover { color: #ff6b6b; }
+
+  /* ── Buttons ── */
+
+  .btn-draw {
+    background: linear-gradient(135deg, var(--green), var(--green-d));
+    border: none;
+    color: #000;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    border-radius: 12px;
+    padding: 14px 0;
+    width: 100%;
+    transition: all 0.2s;
+    box-shadow: 0 4px 24px rgba(0,200,122,0.25);
+  }
+  .btn-draw:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,200,122,0.4);
+  }
+  .btn-draw:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    padding: 5px 14px;
+    transition: all 0.15s;
+  }
+  .btn-reset:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  /* ── Member tags ── */
+  .tag-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    min-height: 32px;
+  }
+  .member-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 13px;
+    animation: tagIn 0.2s ease both;
+  }
+  @keyframes tagIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+  .tag-remove {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.12s;
+  }
+  .tag-remove:hover { color: #ff6b6b; }
+  .empty-hint { font-size: 13px; color: var(--muted); align-self: center; }
+
+  /* ── Edition selector ── */
+  .edition-wrap { display: flex; gap: 8px; }
+  .edition-btn {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 10px 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .edition-btn .year { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--text); line-height: 1; margin-bottom: 2px; }
+  .edition-btn .country-count { font-size: 11px; color: var(--muted); }
+  .edition-btn.active {
+    border-color: var(--green);
+    color: var(--text);
+    background: rgba(0,200,122,0.08);
+  }
+  .edition-btn.active .country-count { color: var(--green); }
+
+  /* ── Draw animation ── */
+  #drawAnim {
+    display: none;
+    text-align: center;
+    padding: 2rem 0;
+  }
+  .ball-spin {
+    display: inline-block;
+    font-size: 3rem;
+    animation: rollBall 0.5s linear infinite;
+  }
+  @keyframes rollBall {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .draw-text { font-size: 14px; color: var(--muted); margin-top: 8px; font-weight: 300; }
+
+  /* ── Result cards ── */
+  #resultSection { display: none; }
+  .result-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .result-count {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 14px 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    animation: cardIn 0.35s cubic-bezier(0.22,1,0.36,1) both;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .result-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,200,122,0.3);
+  }
+  @keyframes cardIn { from { opacity:0; transform:translateY(12px) scale(0.95); } to { opacity:1; transform:none; } }
+  .result-flag { font-size: 2.2rem; line-height: 1; flex-shrink: 0; }
+  .result-info { min-width: 0; }
+  .result-member { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+  .result-country { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .result-num { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--green); line-height: 1; margin-bottom: 2px; }
+
+  /* ── Footer ── */
+  .footer { text-align: center; padding: 2rem 0 3rem; font-size: 12px; color: rgba(255,255,255,0.18); }
+
+  /* ── Validation toast ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #ff6b6b; color: #fff;
+    padding: 10px 20px; border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+    z-index: 9999; display: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    animation: toastIn 0.2s ease;
+  }
+  @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="container" style="max-width:720px;">
+
+    <!-- Hero -->
+    <div class="hero">
+      <span class="trophy">⚽</span>
+      <span class="hero-badge">FIFA World Cup Draw</span>
+      <h1>UNDIAN<br>PIALA DUNIA</h1>
+      <p>Petakan anggota grup ke negara peserta secara acak</p>
+    </div>
+
+    <!-- Edition selector -->
+    <div class="panel">
+      <div class="panel-label">Pilih Edisi</div>
+      <div class="edition-wrap">
+        <div class="edition-btn active" id="btn2022" onclick="setEdition(2022)">
+          <span class="year">2022</span>
+          Qatar &nbsp;🇶🇦
+          <div class="country-count">32 negara</div>
+        </div>
+        <div class="edition-btn" id="btn2026" onclick="setEdition(2026)">
+          <span class="year">2026</span>
+          USA / CAN / MEX 🇺🇸🇨🇦🇲🇽
+          <div class="country-count">48 negara</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members -->
+    <div class="panel">
+      <div class="panel-label">Anggota Grup</div>
+      <textarea id="memberTextarea"
+        placeholder="Toni, Budi, Andi, Sari&#10;atau satu nama per baris&#10;&#10;Paste dari Excel/spreadsheet juga bisa langsung ✓"
+        rows="4"
+        spellcheck="false"
+      ></textarea>
+      <div class="textarea-hint">
+        <span>Pisahkan dengan</span>
+        <code style="background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;font-size:11px;">koma</code>
+        <span class="hint-sep">atau</span>
+        <code style="background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;font-size:11px;">enter</code>
+        <span class="hint-sep">·</span>
+        <span id="liveCount" style="color:var(--green);font-weight:500;"></span>
+      </div>
+      <div class="parse-preview" id="parsePreview">
+        <div class="parse-preview-header">
+          <span class="parse-count" id="parseCount"></span>
+          <button class="btn-clear-all" onclick="clearTextarea()">Hapus semua ×</button>
+        </div>
+        <div class="tag-wrap" id="tagWrap"></div>
+      </div>
+    </div>
+
+    <!-- Draw button -->
+    <button class="btn-draw mb-4" id="drawBtn" onclick="doDraw()">🎲 MULAI UNDIAN</button>
+
+    <!-- Animation -->
+    <div id="drawAnim">
+      <div class="ball-spin">⚽</div>
+      <div class="draw-text">Mengocok negara…</div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultSection">
+      <div class="result-title">
+        <span class="panel-label mb-0">Hasil Undian</span>
+        <div class="d-flex align-items-center gap-2">
+          <span class="result-count" id="resultCount"></span>
+          <button class="btn-reset" onclick="resetResult()">↺ Undian Ulang</button>
+        </div>
+      </div>
+      <div class="results-grid" id="resultsGrid"></div>
+    </div>
+
+    <div class="footer">made with ⚽ — FIFA World Cup Draw App</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+const COUNTRIES = {
+  2026: [
+    // Grup A
+    {n:"Meksiko",f:"🇲🇽"},{n:"Afrika Selatan",f:"🇿🇦"},{n:"Korea Selatan",f:"🇰🇷"},{n:"Ceko",f:"🇨🇿"},
+    // Grup B
+    {n:"Kanada",f:"🇨🇦"},{n:"Bosnia Herzegovina",f:"🇧🇦"},{n:"Qatar",f:"🇶🇦"},{n:"Swiss",f:"🇨🇭"},
+    // Grup C
+    {n:"Brasil",f:"🇧🇷"},{n:"Maroko",f:"🇲🇦"},{n:"Haiti",f:"🇭🇹"},{n:"Skotlandia",f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿"},
+    // Grup D
+    {n:"Amerika Serikat",f:"🇺🇸"},{n:"Paraguay",f:"🇵🇾"},{n:"Australia",f:"🇦🇺"},{n:"Turki",f:"🇹🇷"},
+    // Grup E
+    {n:"Jerman",f:"🇩🇪"},{n:"Curaçao",f:"🇨🇼"},{n:"Pantai Gading",f:"🇨🇮"},{n:"Ecuador",f:"🇪🇨"},
+    // Grup F
+    {n:"Belanda",f:"🇳🇱"},{n:"Jepang",f:"🇯🇵"},{n:"Swedia",f:"🇸🇪"},{n:"Tunisia",f:"🇹🇳"},
+    // Grup G
+    {n:"Belgia",f:"🇧🇪"},{n:"Mesir",f:"🇪🇬"},{n:"Iran",f:"🇮🇷"},{n:"Selandia Baru",f:"🇳🇿"},
+    // Grup H
+    {n:"Spanyol",f:"🇪🇸"},{n:"Tanjung Verde",f:"🇨🇻"},{n:"Arab Saudi",f:"🇸🇦"},{n:"Uruguay",f:"🇺🇾"},
+    // Grup I
+    {n:"Prancis",f:"🇫🇷"},{n:"Senegal",f:"🇸🇳"},{n:"Irak",f:"🇮🇶"},{n:"Norwegia",f:"🇳🇴"},
+    // Grup J
+    {n:"Argentina",f:"🇦🇷"},{n:"Aljazair",f:"🇩🇿"},{n:"Austria",f:"🇦🇹"},{n:"Yordania",f:"🇯🇴"},
+    // Grup K
+    {n:"Portugal",f:"🇵🇹"},{n:"Kongo DR",f:"🇨🇩"},{n:"Uzbekistan",f:"🇺🇿"},{n:"Colombia",f:"🇨🇴"},
+    // Grup L
+    {n:"Inggris",f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"},{n:"Kroasia",f:"🇭🇷"},{n:"Ghana",f:"🇬🇭"},{n:"Panama",f:"🇵🇦"}
+  ]
+};
+
+let members = [];
+let edition = 2022;
+
+function parseTextarea() {
+  const raw = $('#memberTextarea').val();
+  const names = raw
+    .split(/[\n,]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+  const unique = [...new Map(names.map(n => [n.toLowerCase(), n])).values()];
+  members = unique;
+  updatePreview();
+}
+
+function updatePreview() {
+  const $preview = $('#parsePreview');
+  const $tagWrap = $('#tagWrap');
+  const $liveCount = $('#liveCount');
+
+  if (members.length === 0) {
+    $preview.hide();
+    $liveCount.text('');
+    return;
+  }
+
+  $liveCount.text(members.length + ' anggota');
+  $('#parseCount').text(members.length + ' anggota terdeteksi');
+  $tagWrap.empty();
+  members.forEach(m => {
+    $tagWrap.append(`<span class="member-tag">${esc(m)}</span>`);
+  });
+  $preview.show();
+}
+
+function clearTextarea() {
+  $('#memberTextarea').val('').focus();
+  members = [];
+  updatePreview();
+}
+
+$('#memberTextarea').on('input', parseTextarea);
+
+function setEdition(yr) {
+  edition = yr;
+  $('#btn2022, #btn2026').removeClass('active');
+  $('#btn' + yr).addClass('active');
+  $('#resultSection').hide();
+}
+
+function showToast(msg) {
+  $('#toast').text(msg).fadeIn(200);
+  setTimeout(() => $('#toast').fadeOut(300), 2600);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function doDraw() {
+  if (members.length === 0) { showToast('Tambahkan minimal 1 anggota terlebih dahulu'); return; }
+  const pool = COUNTRIES[edition];
+  if (members.length > pool.length) {
+    showToast(`Anggota (${members.length}) melebihi jumlah negara (${pool.length})`);
+    return;
+  }
+  $('#drawBtn').prop('disabled', true);
+  $('#resultSection').hide();
+  $('#drawAnim').fadeIn(200);
+
+  setTimeout(() => {
+    const picked = shuffle(pool);
+    const results = members.map((m, i) => ({ member: m, country: picked[i] }));
+    $('#drawAnim').fadeOut(200, () => renderResults(results));
+    $('#drawBtn').prop('disabled', false);
+  }, 1400);
+}
+
+function renderResults(results) {
+  const $grid = $('#resultsGrid').empty();
+  $('#resultCount').text(results.length + ' peserta');
+  results.forEach((r, i) => {
+    const delay = i * 55;
+    const $card = $(`
+      <div class="result-card" style="animation-delay:${delay}ms">
+        <div class="result-flag">${r.country.f}</div>
+        <div class="result-info">
+          <div class="result-num">#${String(i+1).padStart(2,'0')}</div>
+          <div class="result-member">${esc(r.member)}</div>
+          <div class="result-country">${esc(r.country.n)}</div>
+        </div>
+      </div>
+    `);
+    $grid.append($card);
+  });
+  $('#resultSection').fadeIn(300);
+  $('html, body').animate({ scrollTop: $('#resultSection').offset().top - 20 }, 500);
+}
+
+function resetResult() {
+  $('#resultSection').fadeOut(200);
+  setTimeout(() => { $('#resultsGrid').empty(); $('#resultSection').hide(); }, 220);
+}
+
+function esc(s) {
+  return $('<div>').text(s).html();
+}
+</script>
+</body>
+</html>
